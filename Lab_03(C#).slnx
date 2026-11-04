@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="../ClassLibrary1/ClassLibrary1/ClassLibrary.csproj" />
+  <Project Path="Lab_03(C#)/Lab_03(C#).csproj" />
+</Solution>
