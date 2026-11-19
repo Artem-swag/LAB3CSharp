@@ -168,7 +168,7 @@ namespace Lab_03_C__
                 return new Matrix(res);
             }
 
-            public static void Task2_5(Matrix mat)
+            public static void Task2(Matrix mat)
             {
                 int n = mat.Rows();
 
@@ -212,7 +212,7 @@ namespace Lab_03_C__
                 }
             }
 
-            public static void Task3_5(Checker checker)
+            public static void Task3(Checker checker)
             {
                 Console.WriteLine("Задание 3.5: Вычисление выражения A^T * B - C^T");
 

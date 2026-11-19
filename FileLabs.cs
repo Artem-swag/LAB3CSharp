@@ -83,18 +83,16 @@ namespace Lab_03_C__
             }
         }
 
-        public static void Task5_5(string path, decimal k)
+        public static void Task5(string path, decimal k)
         {
             var serializer = new XmlSerializer(typeof(List<Toy>));
             List<Toy> toys;
 
-            // Читаем данные из XML
             using (var fs = new FileStream(path, FileMode.Open))
             {
                 toys = (List<Toy>)serializer.Deserialize(fs);
             }
 
-            // Пункт 5: Вывод всех игрушек для наглядности
             Console.WriteLine("\n Все игрушки в файле ");
             for (int i = 0; i < toys.Count; i++)
             {
@@ -102,7 +100,6 @@ namespace Lab_03_C__
                 Console.WriteLine($"{i + 1}. {t.Name} | Цена: {t.Price} руб. | Возраст: {t.MinAge}-{t.MaxAge} лет");
             }
 
-            // Пункт 6: Поиск подходящих с флагом
             Console.WriteLine($"\n Игрушки дешевле {k} руб., подходящие для 5 лет ");
             bool found = false;
 
@@ -116,7 +113,6 @@ namespace Lab_03_C__
                 }
             }
 
-            // Если ничего не нашли
             if (!found)
             {
                 Console.WriteLine("Подходящих игрушек не найдено.");
@@ -136,7 +132,7 @@ namespace Lab_03_C__
             }
         }
 
-        public static bool Task6_5(string path, int b)
+        public static bool Task6(string path, int b)
         {
             using (var sr = new StreamReader(path))
             {
@@ -172,7 +168,7 @@ namespace Lab_03_C__
             }
         }
 
-        public static long Task7_5(string path, int k)
+        public static long Task7(string path, int k)
         {
             long sum = 0;
 
@@ -217,7 +213,7 @@ namespace Lab_03_C__
             }
         }
 
-        public static void Task8_5(string inputPath, string outputPath)
+        public static void Task8(string inputPath, string outputPath)
         {
             using (var sr = new StreamReader(inputPath))
             {
