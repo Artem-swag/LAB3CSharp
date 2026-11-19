@@ -88,12 +88,23 @@ namespace Lab_03_C__
             var serializer = new XmlSerializer(typeof(List<Toy>));
             List<Toy> toys;
 
+            // Читаем данные из XML
             using (var fs = new FileStream(path, FileMode.Open))
             {
                 toys = (List<Toy>)serializer.Deserialize(fs);
             }
 
-            Console.WriteLine($"Игрушки дешевле {k} руб., подходящие для 5 лет:");
+            // Пункт 5: Вывод всех игрушек для наглядности
+            Console.WriteLine("\n Все игрушки в файле ");
+            for (int i = 0; i < toys.Count; i++)
+            {
+                Toy t = toys[i];
+                Console.WriteLine($"{i + 1}. {t.Name} | Цена: {t.Price} руб. | Возраст: {t.MinAge}-{t.MaxAge} лет");
+            }
+
+            // Пункт 6: Поиск подходящих с флагом
+            Console.WriteLine($"\n Игрушки дешевле {k} руб., подходящие для 5 лет ");
+            bool found = false;
 
             for (int i = 0; i < toys.Count; i++)
             {
@@ -101,7 +112,14 @@ namespace Lab_03_C__
                 if (t.Price <= k && t.MinAge <= 5 && t.MaxAge >= 5)
                 {
                     Console.WriteLine($" - {t.Name} ({t.Price} руб., {t.MinAge}-{t.MaxAge} лет)");
+                    found = true;
                 }
+            }
+
+            // Если ничего не нашли
+            if (!found)
+            {
+                Console.WriteLine("Подходящих игрушек не найдено.");
             }
         }
 
@@ -226,6 +244,50 @@ namespace Lab_03_C__
                 }
             }
             Console.WriteLine("Задание 8 выполнено: строки без цифр скопированы.");
+        }
+
+        public static void PrintBinaryFile(string path)
+        {
+            if (!File.Exists(path))
+            {
+                Console.WriteLine($"Файл {path} не найден.");
+                return;
+            }
+
+            using (var fs = new FileStream(path, FileMode.Open))
+            {
+                using (var br = new BinaryReader(fs))
+                {
+                    Console.WriteLine($"Содержимое {path}:");
+                    while (br.BaseStream.Position < br.BaseStream.Length)
+                    {
+                        Console.Write(br.ReadInt32() + " ");
+                    }
+                    Console.WriteLine();
+                }
+            }
+        }
+
+        public static void PrintTextFile(string path)
+        {
+            if (!System.IO.File.Exists(path))
+            {
+                Console.WriteLine($"Файл {path} не найден.");
+                return;
+            }
+
+            using (var sr = new StreamReader(path))
+            {
+                Console.WriteLine($"Содержимое {path}:");
+                string line;
+                int lineNumber = 1;
+                while ((line = sr.ReadLine()) != null)
+                {
+                    Console.WriteLine($"{lineNumber}: {line}");
+                    lineNumber++;
+                }
+                Console.WriteLine();
+            }
         }
     }
 }

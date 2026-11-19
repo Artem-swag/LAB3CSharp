@@ -4,194 +4,248 @@ using pract;
 
 namespace Lab_03_C__
 {
-    public sealed class Matrix
+    using System;
+    using pract; 
+
+    namespace Lab_03_C__
     {
-        private double[,] _matrix;
-
-        public Matrix()
+        public sealed class Matrix
         {
-            _matrix = new double[0, 0];
-        }
+            private double[,] _matrix;
 
-        public Matrix(int n, int m, bool readFromKeyboard, Checker checker)
-        {
-            _matrix = new double[n, m];
-            if (readFromKeyboard)
+            public Matrix()
             {
+                _matrix = new double[0, 0];
+            }
+
+            public Matrix(int n, int m, Checker checker)
+            {
+                _matrix = new double[n, m];
                 Console.WriteLine($"Введите {n * m} элементов матрицы {n}x{m} (по строкам от первых к последним):");
+
                 for (int i = 0; i < n; i++)
                 {
                     for (int j = 0; j < m; j++)
                     {
-                        string prompt = $"[{i},{j}]: ";
-                        _matrix[i, j] = checker.ReadDouble(prompt);
+                        _matrix[i, j] = checker.ReadDouble($"[{i},{j}]: ");
                     }
                 }
             }
-        }
 
-        private Matrix(double[,] matrix)
-        {
-            _matrix = matrix;
-        } 
-
-        public int Rows
-        {
-            get
+            public Matrix(int n, bool generateLowerUpperMain)
             {
-                return _matrix.GetLength(0);
-            }
-        }
+                _matrix = new double[n, n];
 
-        public int Cols
-        {
-            get
-            {
-                return _matrix.GetLength(1);
-            }
-        }
-
-        public static Matrix CreatePattern()
-        {
-            int n = 5;
-            var m = new double[n, n];
-            int[,] pattern =
-            {
-                { 0,  0,  5,  0,  0 },
-                { 0,  3, 29,  7,  0 },
-                { 2, 23, 41, 31, 11 },
-                { 0, 19, 37, 13,  0 },
-                { 0,  0, 17,  0,  0 }
-            };
-
-            for (int i = 0; i < n; i++)
-            {
-                for (int j = 0; j < n; j++)
+                if (!generateLowerUpperMain)
                 {
-                    m[i, j] = pattern[i, j];
+                    throw new ArgumentException("Этот конструктор предназначен для генерации 2-го массива");
                 }
-            }
-            return new Matrix(m);
-        }
 
-        public static Matrix GenerateSecondArray(int n)
-        {
-            var res = new double[n, n];
-            var rnd = new Random();
-
-            for (int i = 0; i < n; i++)
-            {
-                for (int j = 0; j < n; j++)
+                var rnd = new Random();
+                for (int i = 0; i < n; i++)
                 {
-                    if (i > j) 
+                    for (int j = 0; j < n; j++)
                     {
-                        res[i, j] = rnd.NextDouble() * (150 - (-70)) + (-70);
-                    }
-                    else       
-                    {
-                        res[i, j] = rnd.NextDouble() * (170 - 17) + 17;
-                    }
-                }
-            }
-            return new Matrix(res);
-        }
-
-        public static Matrix operator *(Matrix a, Matrix b)
-        {
-            if (a.Cols != b.Rows)
-            {
-                throw new ArgumentException("Несовместимые размеры для умножения");
-            }
-
-            var res = new double[a.Rows, b.Cols];
-
-            for (int i = 0; i < a.Rows; i++)
-            {
-                for (int j = 0; j < b.Cols; j++)
-                {
-                    for (int k = 0; k < a.Cols; k++)
-                    {
-                        res[i, j] += a._matrix[i, k] * b._matrix[k, j];
+                        if (i > j) 
+                        {
+                            _matrix[i, j] = rnd.NextDouble() * (150.0 - (-70.0)) + (-70.0);
+                        }
+                        else       
+                        {
+                            _matrix[i, j] = rnd.NextDouble() * (170.0 - 17.0) + 17.0;
+                        }
                     }
                 }
             }
-            return new Matrix(res);
-        }
 
-        public static Matrix operator -(Matrix a, Matrix b)
-        {
-            if (a.Rows != b.Rows || a.Cols != b.Cols)
+            public Matrix(int n)
             {
-                throw new ArgumentException("Несовместимые размеры для вычитания");
-            }
-
-            var res = new double[a.Rows, a.Cols];
-
-            for (int i = 0; i < a.Rows; i++)
-            {
-                for (int j = 0; j < a.Cols; j++)
-                {
-                    res[i, j] = a._matrix[i, j] - b._matrix[i, j];
-                }
-            }
-            return new Matrix(res);
-        }
-
-        public Matrix Transpose()
-        {
-            var res = new double[Cols, Rows];
-
-            for (int i = 0; i < Rows; i++)
-            {
-                for (int j = 0; j < Cols; j++)
-                {
-                    res[j, i] = _matrix[i, j];
-                }
-            }
-            return new Matrix(res);
-        }
-
-        public override string ToString()
-        {
-            var sb = new StringBuilder();
-
-            for (int i = 0; i < Rows; i++)
-            {
-                for (int j = 0; j < Cols; j++)
-                {
-                    sb.Append($"{_matrix[i, j],8:F2} ");
-                }
-                sb.AppendLine();
-            }
-            return sb.ToString();
-        }
-
-        public static void Task2_5(Matrix mat)
-        {
-            int n = mat.Rows;
-            double maxSum = double.MinValue;
-            int bestDiag = 0;
-
-            for (int offset = -(n - 1); offset <= (n - 1); offset++)
-            {
-                double currentSum = 0;
+                _matrix = new double[n, n];
+                var rnd = new Random();
+                int center = n / 2;
 
                 for (int i = 0; i < n; i++)
                 {
-                    int j = i + offset;
-                    if (j >= 0 && j < n)
+                    for (int j = 0; j < n; j++)
                     {
-                        currentSum += mat._matrix[i, j];
+                        int distance = Math.Abs(i - center) + Math.Abs(j - center);
+
+                        if (distance <= center)
+                        {
+                            _matrix[i, j] = rnd.Next(1, 50);
+                        }
+                        else
+                        {
+                            _matrix[i, j] = 0;
+                        }
+                    }
+                }
+            }
+            private Matrix(double[,] matrix)
+            {
+                _matrix = matrix;
+            }
+
+            public int Rows()
+            {
+                return _matrix.GetLength(0);
+            }
+
+            public int Cols()
+            {
+                return _matrix.GetLength(1);
+            }
+
+            public override string ToString()
+            {
+                string result = "";
+
+                for (int i = 0; i < Rows(); i++)
+                {
+                    for (int j = 0; j < Cols(); j++)
+                    {
+                        result += $"{_matrix[i, j],8:F2} ";
+                    }
+                    result += "\n";
+                }
+                return result;
+            }
+
+            public static Matrix operator +(Matrix a, Matrix b)
+            {
+                if (a.Rows() != b.Rows() || a.Cols() != b.Cols())
+                    throw new ArgumentException("Несовместимые размеры для сложения.");
+
+                double[,] res = new double[a.Rows(), a.Cols()];
+                for (int i = 0; i < a.Rows(); i++)
+                    for (int j = 0; j < a.Cols(); j++)
+                        res[i, j] = a._matrix[i, j] + b._matrix[i, j];
+                return new Matrix(res);
+            }
+
+            public static Matrix operator -(Matrix a, Matrix b)
+            {
+                if (a.Rows() != b.Rows() || a.Cols() != b.Cols())
+                    throw new ArgumentException("Несовместимые размеры для вычитания.");
+
+                double[,] res = new double[a.Rows(), a.Cols()];
+                for (int i = 0; i < a.Rows(); i++)
+                    for (int j = 0; j < a.Cols(); j++)
+                        res[i, j] = a._matrix[i, j] - b._matrix[i, j];
+                return new Matrix(res);
+            }
+
+            public static Matrix operator *(Matrix a, Matrix b)
+            {
+                if (a.Cols() != b.Rows())
+                    throw new ArgumentException("Несовместимые размеры для умножения.");
+
+                double[,] res = new double[a.Rows(), b.Cols()];
+                for (int i = 0; i < a.Rows(); i++)
+                {
+                    for (int j = 0; j < b.Cols(); j++)
+                    {
+                        double sum = 0;
+                        for (int k = 0; k < a.Cols(); k++)
+                            sum += a._matrix[i, k] * b._matrix[k, j];
+                        res[i, j] = sum;
+                    }
+                }
+                return new Matrix(res);
+            }
+
+            public Matrix Transpose()
+            {
+                double[,] res = new double[Cols(), Rows()];
+
+                for (int i = 0; i < Rows(); i++)
+                {
+                    for (int j = 0; j < Cols(); j++)
+                    {
+                        res[j, i] = _matrix[i, j];
+                    }
+                }
+                return new Matrix(res);
+            }
+
+            public static void Task2_5(Matrix mat)
+            {
+                int n = mat.Rows();
+
+                double maxSum = double.MinValue;
+                int bestOffset = 0;
+
+                for (int offset = -(n - 1); offset <= (n - 1); offset++)
+                {
+                    double currentSum = 0;
+
+                    for (int i = 0; i < n; i++)
+                    {
+                        int j = i + offset; 
+
+                        if (j >= 0 && j < n)
+                        {
+                            currentSum += mat._matrix[i, j];
+                        }
+                    }
+
+                    if (currentSum > maxSum)
+                    {
+                        maxSum = currentSum;
+                        bestOffset = offset;
                     }
                 }
 
-                if (currentSum > maxSum)
+                Console.WriteLine($"\nМаксимальная сумма элементов диагонали: {maxSum:F2}");
+
+                if (bestOffset == 0)
                 {
-                    maxSum = currentSum;
-                    bestDiag = offset;
+                    Console.WriteLine("Это главная диагональ.");
+                }
+                else if (bestOffset > 0)
+                {
+                    Console.WriteLine($"Это диагональ выше главной (смещение на {bestOffset} вправо).");
+                }
+                else
+                {
+                    Console.WriteLine($"Это диагональ ниже главной (смещение на {-bestOffset} влево).");
                 }
             }
-            Console.WriteLine($"Максимальная сумма {maxSum:F2} у диагонали со смещением {bestDiag} от главной.");
+
+            public static void Task3_5(Checker checker)
+            {
+                Console.WriteLine("Задание 3.5: Вычисление выражения A^T * B - C^T");
+
+                int n = checker.ReadInt("Введите размерность матриц n: ");
+                while (n <= 0)
+                {
+                    Console.WriteLine("Ошибка: n должно быть > 0.");
+                    n = checker.ReadInt("Введите размерность матриц n: ");
+                }
+
+                Console.WriteLine("\n Ввод матрицы A ");
+                Matrix A = new Matrix(n, n, checker);
+
+                Console.WriteLine("\n Ввод матрицы B ");
+                Matrix B = new Matrix(n, n, checker);
+
+                Console.WriteLine("\n Ввод матрицы C ");
+                Matrix C = new Matrix(n, n, checker);
+
+                Console.WriteLine("\nИсходная матрица A:");
+                Console.WriteLine(A.ToString());
+
+                Console.WriteLine("Исходная матрица B:");
+                Console.WriteLine(B.ToString());
+
+                Console.WriteLine("Исходная матрица C:");
+                Console.WriteLine(C.ToString());
+
+                Matrix result = A.Transpose() * B - C.Transpose();
+
+                Console.WriteLine("\nРезультат (A^T * B - C^T):");
+                Console.WriteLine(result.ToString());
+            }
         }
     }
 }
