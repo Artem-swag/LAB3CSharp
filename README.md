@@ -1,4 +1,4 @@
-###Ижиков Артём ИТ-17 Лабораторная работа №3 
+#Ижиков Артём ИТ-17 Лабораторная работа №3 
 
 ## Задача 1
 
@@ -11,22 +11,18 @@
 а лежащие на главной диагонали и выше, являются случайными числами из интервала [17; 170]. 
 Третий массив, размерностью n x n, заполняется для произвольного n так же, как для n=5
 
-
 ### Алгоритм решения
 
-1. Создать класс `Matrix`, содержащий единственное поле `double[,] _matrix`.
-2. Для первого массива реализовать конструктор `Matrix(int n, int m, bool readFromKeyboard, Checker checker)`, который в цикле по строкам (`i` от 0 до n−1, `j` от 0 до m−1) запрашивает у пользователя элементы через `checker.ReadDouble()`. Это обеспечивает заполнение по строкам от первых элементов к последним.
-3. Для второго массива реализовать фабричный метод `GenerateSecondArray(int n)`:
-   - создать генератор случайных чисел `Random`;
-   - в двойном цикле для каждого элемента `[i, j]`:
-     - если `i > j` (ниже главной диагонали) — значение `rnd.NextDouble() * (150 − (−70)) + (−70)`;
-     - иначе (на диагонали и выше) — значение `rnd.NextDouble() * (170 − 17) + 17`.
-4. Для третьего массива реализовать фабричный метод `CreatePattern()`: создать массив 5×5 и заполнить его по жёстко заданному шаблону из задания.
-5. Переопределить `ToString()`: сформировать строку с помощью `StringBuilder`, выводя каждый элемент в формате `{value,8:F2}` и добавляя `AppendLine()` после каждой строки — так матрица отображается в виде таблицы.
+1. Создан класс `Matrix`, содержащий единственное поле `double[,] _matrix`.
+2. Для первого массива реализован **конструктор** `Matrix(int n, int m, Checker checker)`. В двойном цикле по строкам запрашиваются элементы через `checker.ReadDouble()`.
+3. Для второго массива реализован **конструктор** `Matrix(int n, bool generateLowerUpperMain)`. В цикле для каждого элемента: если `i > j` — значение из интервала `[-70; 150]`, иначе — из `[17; 170]`.
+4. Для третьего массива реализован **конструктор** `Matrix(int n)`, который строит узор «ромб» для произвольного `n`: центр `c = n / 2`, если расстояние `|i-c| + |j-c| <= c`, ячейка заполняется числом, иначе нулём.
+5. Переопределён `ToString()` (без `StringBuilder`, через конкатенацию строк) для вывода матрицы в виде таблицы.
+6. Размеры матрицы получаются через методы `Rows()` и `Cols()` (автосвойства запрещены).
 
 ### Тестирование
 
-<img width="497" height="555" alt="screenshot1" src="https://github.com/user-attachments/assets/643608b6-128e-44f0-b4e3-714e523c909f" />
+<img width="692" height="781" alt="image" src="https://github.com/user-attachments/assets/d6b03bc5-e4b9-4e09-b3fb-75048644a51e" />
 
 # Задание 2. Работа с двумерными массивами
 
@@ -37,18 +33,15 @@
 В двумерном массиве n x n выберите такую диагональ, параллельную главной, сумма элементов которой была бы максимальной.
 
 ### Алгоритм решения
-
-1. Реализовать статический метод `Matrix.Task2_5(Matrix mat)`.
-2. Диагональ, параллельную главной, можно задать смещением `offset` относительно главной диагонали: элемент `(i, j)` принадлежит диагонали `offset`, если `j = i + offset`. Значение `offset` меняется от `−(n−1)` до `(n−1)`.
-3. Для каждого `offset`:
-   - обнулить `currentSum`;
-   - пройти по строкам `i` от 0 до `n−1`, вычислить `j = i + offset`; если `0 ≤ j < n`, добавить `mat[i, j]` к `currentSum`;
-   - если `currentSum > maxSum`, обновить `maxSum` и запомнить `bestDiag = offset`.
-4. Вывести `maxSum` и `bestDiag` на экран.
+1. Реализован статический метод `Matrix.Task2_5(Matrix mat)`.
+2. Диагональ задаётся смещением `offset` (от `-(n-1)` до `n-1`).
+3. Для каждого `offset` вычисляется сумма элементов, у которых `j = i + offset` и `0 <= j < n`.
+4. Запоминается максимальная сумма и соответствующее смещение.
+5. В `Program.cs` матрица создаётся **ручным вводом** через конструктор `Matrix(n, n, checker)`.
 
 ### Тестирование
 
-<img width="477" height="216" alt="screenshot2" src="https://github.com/user-attachments/assets/49148f5d-1831-4879-8210-368070ae4420" />
+<img width="697" height="707" alt="image" src="https://github.com/user-attachments/assets/705ea5b1-f249-403b-b297-bd1f13de9d0a" />
 
 # Задание 3. Работа с двумерными массивами как с матрицами
 
@@ -61,24 +54,20 @@
 
 ### Алгоритм решения
 
-1. Перегрузить `operator *` для умножения матриц:
-   - проверить, что `a.Cols == b.Rows`, иначе выбросить `ArgumentException`;
-   - создать результирующий массив `double[a.Rows, b.Cols]`;
-   - тройным циклом `i, j, k` вычислить res[i,j] = сумма по k от a[i,k] * b[k,j].
-2. Перегрузить `operator -` для вычитания:
-   - проверить, что размеры совпадают;
-   - поэлементно вычислить `res[i, j] = a[i, j] - b[i, j]`.
-3. Реализовать метод `Transpose()`:
-   - создать массив `double[Cols, Rows]`;
-   - заполнить `res[j, i] = _matrix[i, j]`.
-4. Переопределить `ToString()` для вывода таблицы.
-5. В `Program.cs` создать матрицы `A`, `B`, `C` (в демонстрации — через `GenerateSecondArray(n)`), вычислить выражение `A.Transpose() * B - C.Transpose()` — благодаря перегрузке операторов оно читается как математическая формула.
+1. Перегружен `operator *` (умножение матриц) с проверкой совместимости размеров.
+2. Перегружен `operator -` (вычитание матриц).
+3. Реализован метод `Transpose()` для транспонирования.
+4. Переопределён `ToString()` для табличного вывода.
+5. В `Program.cs` матрицы A, B и C вводятся **с клавиатуры** (так как в задании нет условия про случайную генерацию), затем вычисляется `A.Transpose() * B - C.Transpose()`.
 
 ### Тестирование
 
-<img width="393" height="437" alt="screenshot3" src="https://github.com/user-attachments/assets/39980342-5a35-4349-9d4d-963f7182dcf7" />
+<img width="688" height="782" alt="image" src="https://github.com/user-attachments/assets/30e3a19c-a574-45d1-8713-25488189b9fc" />
 
-<img width="746" height="345" alt="screenshot3-1" src="https://github.com/user-attachments/assets/93d6b2e3-b5d7-4654-bc3b-20a061ed76d8" />
+<img width="551" height="340" alt="image" src="https://github.com/user-attachments/assets/ba43e561-dfa6-4f77-a840-41a0c3b38c4b" />
+
+
+
 
 # Задание 4. Бинарные файлы
 
@@ -90,22 +79,13 @@
 
 ### Алгоритм решения
 
-1. Метод `FillBinaryFile(string path, int count)`:
-   - открыть `FileStream` в режиме `FileMode.Create`;
-   - обернуть в `BinaryWriter`;
-   - в цикле `count` раз записать `rnd.Next(-50, 50)` через `bw.Write(int)`.
-2. Метод `Task4_5(string inputPath, string outputPath)`:
-   - создать `HashSet<int> seen` — множество уже встреченных чисел;
-   - открыть входной файл через `FileStream` + `BinaryReader`;
-   - открыть выходной файл через `FileStream` + `BinaryWriter`;
-   - в цикле, пока `br.BaseStream.Position < br.BaseStream.Length`:
-     - читать очередное `int` через `br.ReadInt32()`;
-     - если `seen.Add(num)` вернул `true` (число встретилось впервые) — записать его в выходной файл через `bw.Write(num)`;
-   - благодаря `using` все потоки закрываются автоматически.
+1. Метод `FillBinaryFile` заполняет бинарный файл случайными числами через `BinaryWriter`.
+2. Метод `Task4_5` читает файл через `BinaryReader` и использует `HashSet<int>` для отслеживания уникальных чисел. Если число встречается впервые — оно записывается в новый файл.
+3. Реализован метод `PrintBinaryFile` для вывода содержимого файлов на экран.
 
 ### Тестирование
 
-<img width="722" height="252" alt="image" src="https://github.com/user-attachments/assets/43e6ada0-6aec-44c7-b66a-92cb944c2128" />
+<img width="617" height="251" alt="image" src="https://github.com/user-attachments/assets/1a86cd24-f19e-4021-8770-ec4346c9c90d" />
 
 # Задание 5. Бинарные файлы со структурами (XML-сериализация)
 
@@ -119,21 +99,14 @@
 
 ### Алгоритм решения
 
-1. Описать структуру `Toy` с публичными полями: `Name`, `Price`, `MinAge`, `MaxAge`. Поля публичные, потому что `XmlSerializer` сериализует только публичные члены; автосвойства запрещены требованиями лабы.
-2. Метод `FillXmlFile(string path, int count)`:
-   - создать `List<Toy>`;
-   - в цикле сгенерировать `count` игрушек со случайными `Name`, `Price` (100–5000), `MinAge` (1–5), `MaxAge` (6–14);
-   - создать `XmlSerializer(typeof(List<Toy>))`;
-   - открыть `FileStream` в режиме `FileMode.Create` и вызвать `serializer.Serialize(fs, toys)`.
-3. Метод `Task5_5(string path, decimal k)`:
-   - создать `XmlSerializer(typeof(List<Toy>))`;
-   - открыть `FileStream` в режиме `FileMode.Open` и вызвать `(List<Toy>)serializer.Deserialize(fs)`;
-   - в цикле по списку проверить условие: `t.Price <= k && t.MinAge <= 5 && t.MaxAge >= 5`;
-   - вывести подходящие игрушки.
+1. Описана структура `Toy` с публичными полями (`Name`, `Price`, `MinAge`, `MaxAge`).
+2. Метод `FillXmlFile` генерирует список игрушек и сохраняет его в XML с помощью `XmlSerializer`.
+3. Метод `Task5_5` десериализует файл, выводит **все** игрушки, а затем фильтрует те, у которых `Price <= k && MinAge <= 5 && MaxAge >= 5`. Если подходящих нет — выводится сообщение.
+4. В `Program.cs` добавлена проверка: количество игрушек `> 0`, цена `k >= 0`.
 
 ### Тестирование
 
-<img width="452" height="371" alt="image" src="https://github.com/user-attachments/assets/61697469-28cd-460c-8db1-3c739a3fa055" />
+<img width="497" height="552" alt="image" src="https://github.com/user-attachments/assets/97c1fd2a-a045-4b6a-b16b-f6ce79ac86a3" />
 
 # Задание 6. Текстовые файлы
 
@@ -145,19 +118,13 @@
 
 ### Алгоритм решения
 
-1. Метод `FillTextFile6(string path, int count)`:
-   - открыть `StreamWriter`;
-   - в цикле записать `count` строк, каждая — `rnd.Next(-100, 100)`.
-2. Метод `Task6_5(string path, int b)`:
-   - открыть `StreamReader`;
-   - в цикле `while ((line = sr.ReadLine()) != null)`:
-     - попытаться распарсить строку через `int.TryParse(line, out num)`;
-     - если парсинг успешен и `num == b` — вернуть `true`;
-   - если цикл завершился, а число не найдено — вернуть `false`.
+1. Метод `FillTextFile6` записывает случайные числа построчно через `StreamWriter`.
+2. Метод `Task6_5` читает файл через `StreamReader`, использует `int.TryParse` и возвращает `true` при первом совпадении.
+3. Метод `PrintTextFile` выводит содержимое файла на экран.
 
 ### Тестирование
 
-<img width="422" height="152" alt="image" src="https://github.com/user-attachments/assets/a8d288d0-60e8-4b50-a691-7278914bc6a7" />
+<img width="462" height="570" alt="image" src="https://github.com/user-attachments/assets/f1024f36-cb35-4639-ad02-f81d49238bc1" />
 
 # Задание 7. Текстовые файлы (числа по несколько в строке)
 
@@ -169,19 +136,13 @@
 
 ### Алгоритм решения
 
-1. Метод `FillTextFile7(string path, int lines, int numsPerLine)`:
-   - открыть `StreamWriter`;
-   - для каждой из `lines` строк собрать строку из `numsPerLine` случайных чисел (1–99), разделённых пробелом, и записать её через `sw.WriteLine(line)`.
-2. Метод `Task7_5(string path, int k)`:
-   - инициализировать `long sum = 0`;
-   - открыть `StreamReader`;
-   - в цикле читать строки; каждую строку разбить на части через `line.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries)`;
-   - для каждой части выполнить `int.TryParse`; если успешно и `num % k == 0`, добавить `num` к `sum`;
-   - вернуть `sum`.
+1. Метод `FillTextFile7` заполняет файл строками, в каждой из которых несколько чисел через пробел.
+2. Метод `Task7_5` читает файл, разбивает каждую строку через `Split` и суммирует числа, кратные `k`.
+3. В `Program.cs` добавлена проверка `k != 0` (защита от деления на ноль).
 
 ### Тестирование
 
-<img width="416" height="155" alt="image" src="https://github.com/user-attachments/assets/0de9fbef-bb06-42a1-a8c6-7c1954fccc5c" />
+<img width="437" height="407" alt="image" src="https://github.com/user-attachments/assets/422acb7b-5e35-40c4-bf56-235943478ac4" />
 
 # Задание 8. Текстовый файл (строки текста)
 
@@ -193,16 +154,10 @@
 
 ### Алгоритм решения
 
-1. Метод `FillTextFile8(string path, int lines)`:
-   - задать массив образцов строк (часть с цифрами, часть без);
-   - открыть `StreamWriter`;
-   - в цикле `lines` раз записать случайный образец.
-2. Метод `Task8_5(string inputPath, string outputPath)`:
-   - открыть `StreamReader` на входной файл и `StreamWriter` на выходной;
-   - в цикле читать строки;
-   - для каждой строки проверить, есть ли в ней цифры: пройти посимвольно и вызвать `char.IsDigit(line[i])`; если найден хотя бы один — установить флаг `hasDigits = true` и прервать цикл;
-   - если `hasDigits == false` — записать строку в выходной файл через `sw.WriteLine(line)`.
-
+1. Метод `FillTextFile8` заполняет файл случайными строками (с цифрами и без).
+2. Метод `Task8_5` читает строки и проверяет каждый символ через `char.IsDigit`. Если цифр нет — строка записывается в новый файл.
+3. Исходный и результирующий файлы выводятся на экран через `PrintTextFile`.
 ### Тестирование
 
-<img width="532" height="423" alt="image" src="https://github.com/user-attachments/assets/c9c1f93a-ad9d-475b-bbfa-77fba8ff5ab4" />
+<img width="497" height="431" alt="image" src="https://github.com/user-attachments/assets/85d48d9f-22c5-43e9-b16a-8b9e6a1f1282" />
+
