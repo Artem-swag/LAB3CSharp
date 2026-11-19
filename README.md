@@ -68,6 +68,8 @@
 
 <img width="551" height="340" alt="image" src="https://github.com/user-attachments/assets/ba43e561-dfa6-4f77-a840-41a0c3b38c4b" />
 
+<img width="468" height="67" alt="image" src="https://github.com/user-attachments/assets/4d2cf244-94b6-423a-b2da-a93ffa08dc37" />
+
 # Задание 4. Бинарные файлы
 
 ## Задача 5
